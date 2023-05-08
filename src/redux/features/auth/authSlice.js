@@ -25,10 +25,16 @@ const authSlice = createSlice({
     error: null,
   },
   extraReducers: builder => {
-    builder.addCase(registerUser.fulfilled, (state, action) => {
-      state.user = action.payload;
-    });
-    // Add more cases for other action types
+    builder
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+      .addCase(logoutUser.fulfilled, state => {
+        state.user = null;
+      });
   },
 });
 
