@@ -1,23 +1,42 @@
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import ContactForm from './ContactForm/ContactForm';
 import ContactList from './ContactList/ContactList';
 import { Filter } from './Filter/Filter';
+import Navigation from './Navigation/Navigation';
+import Register from './Register/Register';
+import Login from './Login/Login';
+import UserMenu from './UserMenu/UserMenu';
 import styles from './app.module.css';
 
 function App() {
   return (
-    <div className={styles.container}>
-      <div className={styles.phonebook}>
-        <h1>Phonebook</h1>
-        <ContactForm />
+    <Router>
+      <div className={styles.container}>
+        <Navigation />
+        <UserMenu />
+        <Routes>
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/contacts"
+            element={
+              <>
+                <div className={styles.phonebook}>
+                  <h1>Phonebook</h1>
+                  <ContactForm />
+                </div>
+                <div className={styles.contacts}>
+                  <h2>Contacts</h2>
+                  <Filter />
+                  <ContactList />
+                </div>
+              </>
+            }
+          />
+          <Route path="*" element={<Navigate to="/contacts" />} />
+        </Routes>
       </div>
-
-      <div className={styles.contacts}>
-        <h2>Contacts</h2>
-        <Filter />
-
-        <ContactList />
-      </div>
-    </div>
+    </Router>
   );
 }
 
