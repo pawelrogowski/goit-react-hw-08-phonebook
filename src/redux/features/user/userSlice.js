@@ -19,10 +19,29 @@ const userSlice = createSlice({
     error: null,
   },
   extraReducers: builder => {
-    builder.addCase(fetchCurrentUser.fulfilled, (state, action) => {
-      state.currentUser = action.payload;
-    });
-    // Add more cases for other action types
+    builder
+      .addCase(fetchCurrentUser.fulfilled, (state, action) => {
+        state.currentUser = action.payload;
+        alert('200: Information found.'); // Add browser alert for code 200
+      })
+      .addCase(fetchCurrentUser.rejected, (state, action) => {
+        state.error = action.payload;
+        if (action.error.code === 401) {
+          alert('401: Missing header with authorization token.'); // Add browser alert for code 401
+        }
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.currentUser = action.payload;
+        alert('200: The contact was successfully updated.'); // Add browser alert for code 200
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.error = action.payload;
+        if (action.error.code === 400) {
+          alert('400: Contact update failed.'); // Add browser alert for code 400
+        } else if (action.error.code === 401) {
+          alert('401: Missing header with authorization token.'); // Add browser alert for code 401
+        }
+      });
   },
 });
 

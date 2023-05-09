@@ -15,7 +15,7 @@ function ContactListItem({ contact }) {
         ❌
       </button>
       <span>
-        {contact.name}: {contact.phone}
+        {contact.name}: {contact.number}
       </span>
     </li>
   );
