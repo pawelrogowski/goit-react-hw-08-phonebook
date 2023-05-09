@@ -5,7 +5,6 @@ import ContactForm from '../ContactForm/ContactForm';
 import ContactList from '../ContactList/ContactList';
 import { Filter } from '../Filter/Filter';
 import Login from '../Login/Login';
-import styles from '../app.module.css';
 
 function Auth() {
   const user = useSelector(state => state.auth.user);
@@ -17,15 +16,14 @@ function Auth() {
   return (
     <Routes>
       <Route path="/goit-react-hw-08-phonebook/" element={<Navigate to="/contacts" />} />
-      <Route path="/login" element={<Navigate to="/contacts" />} />
       <Route
         path="/contacts"
         element={
           <>
-            <div className={styles.phonebook}>
+            <div>
               <ContactForm />
             </div>
-            <div className={styles.contacts}>
+            <div>
               <Filter />
               <ContactList />
             </div>

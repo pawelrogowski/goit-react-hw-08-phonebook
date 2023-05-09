@@ -10,7 +10,7 @@ export const Filter = () => {
   };
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="sm" sx={{ mt: 4 }}>
       <TextField
         label="Find contacts by name"
         variant="outlined"
