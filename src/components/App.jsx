@@ -22,11 +22,9 @@ function App() {
             element={
               <>
                 <div className={styles.phonebook}>
-                  <h1>Phonebook</h1>
                   <ContactForm />
                 </div>
                 <div className={styles.contacts}>
-                  <h2>Contacts</h2>
                   <Filter />
                   <ContactList />
                 </div>

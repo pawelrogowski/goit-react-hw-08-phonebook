@@ -1,6 +1,7 @@
 import { useDispatch } from 'react-redux';
 import { deleteContact } from 'redux/features/contacts/contactsSlice';
-import styles from './contactListItem.module.css';
+import { ListItem, ListItemText, IconButton, ListItemSecondaryAction } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 function ContactListItem({ contact }) {
   const dispatch = useDispatch();
@@ -10,14 +11,14 @@ function ContactListItem({ contact }) {
   };
 
   return (
-    <li className={styles['item']}>
-      <button className={styles['delete-button']} type="button" onClick={handleDelete}>
-        ❌
-      </button>
-      <span>
-        {contact.name}: {contact.number}
-      </span>
-    </li>
+    <ListItem>
+      <ListItemText primary={contact.name} secondary={contact.number} />
+      <ListItemSecondaryAction>
+        <IconButton edge="end" color="error" onClick={handleDelete}>
+          <DeleteIcon />
+        </IconButton>
+      </ListItemSecondaryAction>
+    </ListItem>
   );
 }
 
