@@ -16,7 +16,8 @@ function Auth() {
 
   return (
     <Routes>
-      <Route path="/login" element={<Navigate to="/auth/contacts" />} />
+      <Route path="/" element={<Navigate to="/contacts" />} />
+      <Route path="/login" element={<Navigate to="/contacts" />} />
       <Route
         path="/contacts"
         element={
