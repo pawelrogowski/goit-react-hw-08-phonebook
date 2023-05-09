@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -82,5 +83,15 @@ function EditContactDialog({ open, onClose, contact, onUpdate }) {
     </Dialog>
   );
 }
+
+EditContactDialog.propTypes = {
+  contact: PropTypes.shape({
+    name: PropTypes.any,
+    number: PropTypes.any,
+  }),
+  onClose: PropTypes.any,
+  onUpdate: PropTypes.func,
+  open: PropTypes.any,
+};
 
 export default EditContactDialog;

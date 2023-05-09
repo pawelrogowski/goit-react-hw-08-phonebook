@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { deleteContact, updateContact, fetchContacts } from 'redux/features/contacts/contactsSlice';
@@ -52,5 +53,13 @@ function ContactListItem({ contact }) {
     </>
   );
 }
+
+ContactListItem.propTypes = {
+  contact: PropTypes.shape({
+    id: PropTypes.any,
+    name: PropTypes.any,
+    number: PropTypes.any,
+  }),
+};
 
 export default ContactListItem;
