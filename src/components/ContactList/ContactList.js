@@ -6,7 +6,6 @@ function ContactList() {
   const contacts = useSelector(state => state.contacts.contacts);
   const searchTerm = useSelector(state => state.contacts.searchTerm);
   const status = useSelector(state => state.contacts.status);
-  const dispatch = useDispatch();
 
   const filteredContacts =
     contacts &&
