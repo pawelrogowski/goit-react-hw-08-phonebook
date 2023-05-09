@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import ContactListItem from '../ContactListItem/ContactListItem';
 import { List, Box, CircularProgress, Container } from '@mui/material';
 
