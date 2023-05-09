@@ -1,4 +1,6 @@
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchContacts } from 'redux/features/contacts/contactsSlice';
 import ContactListItem from '../ContactListItem/ContactListItem';
 import { List, Box, CircularProgress, Container, Typography } from '@mui/material';
 
@@ -6,6 +8,11 @@ function ContactList() {
   const contacts = useSelector(state => state.contacts.contacts);
   const searchTerm = useSelector(state => state.contacts.searchTerm);
   const status = useSelector(state => state.contacts.status);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   const filteredContacts =
     contacts &&
