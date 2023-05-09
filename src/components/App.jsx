@@ -2,18 +2,16 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import ContactForm from './ContactForm/ContactForm';
 import ContactList from './ContactList/ContactList';
 import { Filter } from './Filter/Filter';
-import Navigation from './Navigation/Navigation';
 import Register from './Register/Register';
 import Login from './Login/Login';
-import UserMenu from './UserMenu/UserMenu';
 import styles from './app.module.css';
+import Header from './Header/Header';
 
 function App() {
   return (
     <Router>
       <div className={styles.container}>
-        <Navigation />
-        <UserMenu />
+        <Header />
         <Routes>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
