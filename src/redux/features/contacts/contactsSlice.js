@@ -7,16 +7,20 @@ export const fetchContacts = createAsyncThunk('contacts/fetchContacts', async ()
   return response.data;
 });
 
+const handleNotification = (thunkAPI, message) => {
+  thunkAPI.dispatch(showNotification(message));
+};
+
 export const addContact = createAsyncThunk('contacts/addContact', async (contact, thunkAPI) => {
   try {
     const response = await axiosInstance.post('/contacts', {
       name: contact.name,
       number: contact.number,
     });
-    thunkAPI.dispatch(showNotification('The contact was successfully created.'));
+    handleNotification(thunkAPI, 'The contact was successfully created.');
     return response.data;
   } catch (error) {
-    thunkAPI.dispatch(showNotification('Error creating contact.'));
+    handleNotification(thunkAPI, 'Error creating contact.');
     return thunkAPI.rejectWithValue(error.response.data.message);
   }
 });
@@ -26,10 +30,10 @@ export const deleteContact = createAsyncThunk(
   async (contactId, thunkAPI) => {
     try {
       await axiosInstance.delete(`/contacts/${contactId}`);
-      thunkAPI.dispatch(showNotification('The contact was successfully deleted.'));
+      handleNotification(thunkAPI, 'The contact was successfully deleted.');
       return contactId;
     } catch (error) {
-      thunkAPI.dispatch(showNotification('Error deleting contact.'));
+      handleNotification(thunkAPI, 'Error deleting contact.');
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
@@ -40,10 +44,10 @@ export const updateContact = createAsyncThunk(
   async ({ contactId, contactData }, thunkAPI) => {
     try {
       const response = await axiosInstance.patch(`/contacts/${contactId}`, contactData);
-      thunkAPI.dispatch(showNotification('The contact was successfully updated.'));
+      handleNotification(thunkAPI, 'The contact was successfully updated.');
       return { contactId, contactData: response.data };
     } catch (error) {
-      thunkAPI.dispatch(showNotification('Error updating contact.'));
+      handleNotification(thunkAPI, 'Error updating contact.');
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
@@ -71,7 +75,6 @@ const contactsSlice = createSlice({
     builder
       .addCase(fetchContacts.fulfilled, (state, action) => {
         state.contacts = action.payload;
-        // alert('Contacts found.');
       })
       .addCase(fetchContacts.rejected, (state, action) => {
         state.error = action.payload;

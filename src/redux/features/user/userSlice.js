@@ -2,13 +2,17 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axiosInstance from '../../api';
 import { showNotification } from '../notification/notificationSlice';
 
+const handleNotification = (thunkAPI, message) => {
+  thunkAPI.dispatch(showNotification(message));
+};
+
 export const fetchCurrentUser = createAsyncThunk('user/fetchCurrentUser', async (_, thunkAPI) => {
   try {
     const response = await axiosInstance.get('/users/current');
-    thunkAPI.dispatch(showNotification('Information found.'));
+    handleNotification(thunkAPI, 'Information found.');
     return response.data;
   } catch (error) {
-    thunkAPI.dispatch(showNotification('Error fetching current user.'));
+    handleNotification(thunkAPI, 'Error fetching current user.');
     return thunkAPI.rejectWithValue(error.response.data.message);
   }
 });
@@ -16,17 +20,20 @@ export const fetchCurrentUser = createAsyncThunk('user/fetchCurrentUser', async 
 export const updateUser = createAsyncThunk('user/updateUser', async (userData, thunkAPI) => {
   try {
     const response = await axiosInstance.patch('/users/current', userData);
-    thunkAPI.dispatch(showNotification('The contact was successfully updated.'));
+    handleNotification(thunkAPI, 'The contact was successfully updated.');
     return response.data;
   } catch (error) {
-    thunkAPI.dispatch(showNotification('Error updating contact.'));
+    handleNotification(thunkAPI, 'Error updating contact.');
     return thunkAPI.rejectWithValue(error.response.data.message);
   }
 });
 
 const userSlice = createSlice({
   name: 'user',
-  initialState: null,
+  initialState: {
+    currentUser: null,
+    error: null,
+  },
   extraReducers: builder => {
     builder
       .addCase(fetchCurrentUser.fulfilled, (state, action) => {

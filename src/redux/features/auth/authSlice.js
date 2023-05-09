@@ -2,28 +2,36 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { showNotification } from '../notification/notificationSlice';
 import axiosInstance from '../../api';
 
+const handleAuthLocalStorage = (token, user) => {
+  if (token && user) {
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
+  } else {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  }
+};
+
 export const registerUser = createAsyncThunk('auth/registerUser', async (userData, thunkAPI) => {
   try {
     const response = await axiosInstance.post('/users/signup', userData);
-    localStorage.setItem('token', response.data.token);
-    localStorage.setItem('user', JSON.stringify(response.data.user));
+    handleAuthLocalStorage(response.data.token, response.data.user);
     thunkAPI.dispatch(showNotification('Account Creation Successful'));
     return response.data.user;
   } catch (error) {
-    if (error.response.data.code === 11000) {
-      thunkAPI.dispatch(showNotification('The email is already registered.'));
-      return thunkAPI.rejectWithValue('The email is already registered.');
-    }
-    thunkAPI.dispatch(showNotification('Error Creating a user'));
-    return thunkAPI.rejectWithValue(error.response.data.message);
+    const errorMessage =
+      error.response.data.code === 11000
+        ? 'The email is already registered.'
+        : 'Error Creating a user';
+    thunkAPI.dispatch(showNotification(errorMessage));
+    return thunkAPI.rejectWithValue(errorMessage);
   }
 });
 
 export const loginUser = createAsyncThunk('auth/loginUser', async (userData, thunkAPI) => {
   try {
     const response = await axiosInstance.post('/users/login', userData);
-    localStorage.setItem('token', response.data.token);
-    localStorage.setItem('user', JSON.stringify(response.data.user));
+    handleAuthLocalStorage(response.data.token, response.data.user);
     thunkAPI.dispatch(showNotification('Successfully Logged In.'));
     return response.data.user;
   } catch (error) {
@@ -34,8 +42,7 @@ export const loginUser = createAsyncThunk('auth/loginUser', async (userData, thu
 
 export const logoutUser = createAsyncThunk('auth/logoutUser', async (arg, thunkAPI) => {
   try {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    handleAuthLocalStorage(null, null);
     thunkAPI.dispatch(showNotification('Successfully Logged Out.'));
   } catch (error) {
     thunkAPI.dispatch(showNotification('Error Logging Out.'));

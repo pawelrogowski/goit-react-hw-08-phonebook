@@ -35,7 +35,6 @@ const Header = () => {
 
   const handleLogout = () => {
     dispatch(logoutUser());
-
     dispatch(clearContacts());
     navigate('/login');
   };
