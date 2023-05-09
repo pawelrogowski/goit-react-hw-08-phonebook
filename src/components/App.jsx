@@ -19,7 +19,7 @@ function App() {
           }
         />
         <Route path="/register" element={<Register />} />
-        <Route path="*" element={<Navigate to="/auth/login" />} />
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
       <Notification />
     </div>
