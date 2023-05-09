@@ -6,18 +6,33 @@ import { TextField, Button, Box, Container, FormControl } from '@mui/material';
 function ContactForm() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+  const [nameError, setNameError] = useState(false);
+  const [numberError, setNumberError] = useState(false);
   const dispatch = useDispatch();
+
+  const validateName = name => {
+    const namePattern = /^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$/;
+    return namePattern.test(name);
+  };
+
+  const validateNumber = number => {
+    const numberPattern =
+      /\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/;
+    return numberPattern.test(number);
+  };
 
   const handleSubmit = async e => {
     e.preventDefault();
-    try {
-      await dispatch(addContact({ name, number }));
-      dispatch(fetchContacts());
-    } catch (error) {
-      console.error('Error adding contact:', error);
+    if (validateName(name) && validateNumber(number)) {
+      try {
+        await dispatch(addContact({ name, number }));
+        dispatch(fetchContacts());
+      } catch (error) {
+        console.error('Error adding contact:', error);
+      }
+      setName('');
+      setNumber('');
     }
-    setName('');
-    setNumber('');
   };
 
   return (
@@ -30,12 +45,17 @@ function ContactForm() {
             type="text"
             placeholder="Name"
             name="name"
-            title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-            pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
             required
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={e => {
+              setName(e.target.value);
+              setNameError(!validateName(e.target.value));
+            }}
             margin="normal"
+            error={nameError}
+            helperText={
+              nameError ? 'Name may contain only letters, apostrophe, dash and spaces.' : ''
+            }
           />
         </FormControl>
         <FormControl fullWidth>
@@ -45,15 +65,29 @@ function ContactForm() {
             type="tel"
             placeholder="Number"
             name="number"
-            title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-            pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
             required
             value={number}
-            onChange={e => setNumber(e.target.value)}
+            onChange={e => {
+              setNumber(e.target.value);
+              setNumberError(!validateNumber(e.target.value));
+            }}
             margin="normal"
+            error={numberError}
+            helperText={
+              numberError
+                ? 'Phone number must be digits and can contain spaces, dashes, parentheses and can start with +'
+                : ''
+            }
           />
         </FormControl>
-        <Button variant="contained" color="primary" type="submit" sx={{ mt: 2 }} fullWidth>
+        <Button
+          variant="contained"
+          color="primary"
+          type="submit"
+          sx={{ mt: 2 }}
+          fullWidth
+          disabled={nameError || numberError}
+        >
           Add Contact
         </Button>
       </Box>
