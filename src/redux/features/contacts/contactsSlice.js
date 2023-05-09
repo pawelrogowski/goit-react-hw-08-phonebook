@@ -1,40 +1,50 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axiosInstance from '../../api';
+import { showNotification } from '../notification/notificationSlice';
 
 export const fetchContacts = createAsyncThunk('contacts/fetchContacts', async () => {
   const response = await axiosInstance.get('/contacts');
   return response.data;
 });
 
-export const addContact = createAsyncThunk('contacts/addContact', async contact => {
+export const addContact = createAsyncThunk('contacts/addContact', async (contact, thunkAPI) => {
   try {
     const response = await axiosInstance.post('/contacts', {
       name: contact.name,
       number: contact.number,
     });
+    thunkAPI.dispatch(showNotification('The contact was successfully created.'));
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message);
+    thunkAPI.dispatch(showNotification('Error creating contact.'));
+    return thunkAPI.rejectWithValue(error.response.data.message);
   }
 });
 
-export const deleteContact = createAsyncThunk('contacts/deleteContact', async contactId => {
-  try {
-    await axiosInstance.delete(`/contacts/${contactId}`);
-    return contactId;
-  } catch (error) {
-    throw new Error(error.response.data.message);
+export const deleteContact = createAsyncThunk(
+  'contacts/deleteContact',
+  async (contactId, thunkAPI) => {
+    try {
+      await axiosInstance.delete(`/contacts/${contactId}`);
+      thunkAPI.dispatch(showNotification('The contact was successfully deleted.'));
+      return contactId;
+    } catch (error) {
+      thunkAPI.dispatch(showNotification('Error deleting contact.'));
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
   }
-});
+);
 
 export const updateContact = createAsyncThunk(
   'contacts/updateContact',
-  async (contactId, contactData) => {
+  async ({ contactId, contactData }, thunkAPI) => {
     try {
       const response = await axiosInstance.patch(`/contacts/${contactId}`, contactData);
+      thunkAPI.dispatch(showNotification('The contact was successfully updated.'));
       return { contactId, contactData: response.data };
     } catch (error) {
-      throw new Error(error.response.data.message);
+      thunkAPI.dispatch(showNotification('Error updating contact.'));
+      return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
 );
@@ -65,39 +75,18 @@ const contactsSlice = createSlice({
       })
       .addCase(fetchContacts.rejected, (state, action) => {
         state.error = action.payload;
-        if (action.error.code === 401) {
-          alert('401: Missing header with authorization token.');
-        } else if (action.error.code === 404) {
-          alert('404: There is no such user collection.');
-        } else if (action.error.code === 500) {
-          alert('500: Server error.');
-        }
       })
       .addCase(addContact.fulfilled, (state, action) => {
         state.contacts.push(action.payload);
-        alert('201: The contact was successfully created.');
       })
       .addCase(addContact.rejected, (state, action) => {
         state.error = action.payload;
-        if (action.error.code === 400) {
-          alert('400: Error creating contact.');
-        } else if (action.error.code === 401) {
-          alert('401: Missing header with authorization token.');
-        }
       })
       .addCase(deleteContact.fulfilled, (state, action) => {
         state.contacts = state.contacts.filter(contact => contact.id !== action.payload);
-        alert('200: The contact was successfully deleted.');
       })
       .addCase(deleteContact.rejected, (state, action) => {
         state.error = action.payload;
-        if (action.error.code === 401) {
-          alert('401: Missing header with authorization token.');
-        } else if (action.error.code === 404) {
-          alert('404: There is no such user collection.');
-        } else if (action.error.code === 500) {
-          alert('500: Server error.');
-        }
       })
       .addCase(updateContact.fulfilled, (state, action) => {
         const indexToUpdate = state.contacts.findIndex(
@@ -106,15 +95,9 @@ const contactsSlice = createSlice({
         if (indexToUpdate >= 0) {
           state.contacts[indexToUpdate] = action.payload.contactData;
         }
-        alert('200: The contact was successfully updated.');
       })
       .addCase(updateContact.rejected, (state, action) => {
         state.error = action.payload;
-        if (action.error.code === 400) {
-          alert('400: Contact update failed.');
-        } else if (action.error.code === 401) {
-          alert('401: Missing header with authorization token.');
-        }
       });
   },
 });

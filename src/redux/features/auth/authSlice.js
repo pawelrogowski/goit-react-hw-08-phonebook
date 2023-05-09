@@ -1,40 +1,46 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { showNotification } from '../notification/notificationSlice';
 import axiosInstance from '../../api';
 
-export const registerUser = createAsyncThunk(
-  'auth/registerUser',
-  async (userData, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.post('/users/signup', userData);
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      return response.data.user;
-    } catch (error) {
-      if (error.response.data.code === 11000) {
-        return rejectWithValue('The email is already registered.');
-      }
-      return rejectWithValue(error.response.data.message);
+export const registerUser = createAsyncThunk('auth/registerUser', async (userData, thunkAPI) => {
+  try {
+    const response = await axiosInstance.post('/users/signup', userData);
+    localStorage.setItem('token', response.data.token);
+    localStorage.setItem('user', JSON.stringify(response.data.user));
+    thunkAPI.dispatch(showNotification('Account Creation Successful'));
+    return response.data.user;
+  } catch (error) {
+    if (error.response.data.code === 11000) {
+      thunkAPI.dispatch(showNotification('The email is already registered.'));
+      return thunkAPI.rejectWithValue('The email is already registered.');
     }
+    thunkAPI.dispatch(showNotification('Error Creating a user'));
+    return thunkAPI.rejectWithValue(error.response.data.message);
   }
-);
+});
 
-export const loginUser = createAsyncThunk(
-  'auth/loginUser',
-  async (userData, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.post('/users/login', userData);
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      return response.data.user;
-    } catch (error) {
-      return rejectWithValue(error.response.data.message);
-    }
+export const loginUser = createAsyncThunk('auth/loginUser', async (userData, thunkAPI) => {
+  try {
+    const response = await axiosInstance.post('/users/login', userData);
+    localStorage.setItem('token', response.data.token);
+    localStorage.setItem('user', JSON.stringify(response.data.user));
+    thunkAPI.dispatch(showNotification('Successfully Logged In.'));
+    return response.data.user;
+  } catch (error) {
+    thunkAPI.dispatch(showNotification('Login error.'));
+    return thunkAPI.rejectWithValue(error.response.data.message);
   }
-);
+});
 
-export const logoutUser = createAsyncThunk('auth/logoutUser', async () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
+export const logoutUser = createAsyncThunk('auth/logoutUser', async (arg, thunkAPI) => {
+  try {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    thunkAPI.dispatch(showNotification('Successfully Logged Out.'));
+  } catch (error) {
+    thunkAPI.dispatch(showNotification('Error Logging Out.'));
+    return thunkAPI.rejectWithValue(error.message);
+  }
 });
 
 const getUserFromLocalStorage = () => {
@@ -49,6 +55,7 @@ const authSlice = createSlice({
     status: 'idle',
     error: null,
   },
+  reducers: {},
   extraReducers: builder => {
     builder
       .addCase(registerUser.pending, state => {
@@ -58,12 +65,10 @@ const authSlice = createSlice({
         state.user = action.payload;
         state.status = 'idle';
         state.error = null;
-        alert('Account Creation Succesful');
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.status = 'idle';
         state.error = action.payload;
-        alert('Error Creating a user');
       })
       .addCase(loginUser.pending, state => {
         state.status = 'loading';
@@ -72,16 +77,21 @@ const authSlice = createSlice({
         state.user = action.payload;
         state.status = 'idle';
         state.error = null;
-        alert('Succesfully Logged In.');
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.status = 'idle';
         state.error = action.payload;
-        alert('Login error.');
+      })
+      .addCase(logoutUser.pending, state => {
+        state.status = 'loading';
       })
       .addCase(logoutUser.fulfilled, state => {
         state.user = null;
-        alert('Succesfully Logged Out.');
+        state.status = 'idle';
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.status = 'idle';
+        state.error = action.payload;
       });
   },
 });

@@ -1,9 +1,32 @@
-import { NavLink } from 'react-router-dom';
+import React from 'react';
+import { NavLink as RouterNavLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutUser } from 'redux/features/auth/authSlice';
 import { clearContacts } from 'redux/features/contacts/contactsSlice';
 import { useNavigate } from 'react-router-dom';
 import { Container, Box, Link, Button } from '@mui/material';
+
+const NavLink = React.forwardRef((props, ref) => (
+  <Button
+    ref={ref}
+    component={RouterNavLink}
+    variant="outlined"
+    disableElevation
+    sx={{
+      '&.active': {
+        backgroundColor: 'primary.main',
+        color: 'white',
+        textDecoration: 'none',
+      },
+      '&:hover': {
+        backgroundColor: 'primary.main',
+        color: 'white',
+      },
+      transition: 'background-color 250ms, color 250ms',
+    }}
+    {...props}
+  />
+));
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -14,12 +37,6 @@ const Header = () => {
     dispatch(logoutUser());
     dispatch(clearContacts());
     navigate('/login');
-  };
-
-  const activeLinkStyle = {
-    textDecoration: 'underline',
-    textDecorationThickness: '2px',
-    textDecorationColor: 'currentColor',
   };
 
   return (
@@ -39,35 +56,18 @@ const Header = () => {
             {user.email}
           </Link>
         ) : (
-          <Link
-            component={NavLink}
-            to="/register"
-            color="inherit"
-            underline="hover"
-            activeStyle={activeLinkStyle}
-          >
+          <NavLink to="/register" color="inherit">
             Register
-          </Link>
+          </NavLink>
         )}
         {user ? (
-          <Button
-            variant="text"
-            color="inherit"
-            onClick={handleLogout}
-            activeStyle={activeLinkStyle}
-          >
+          <Button variant="outlined" color="inherit" onClick={handleLogout}>
             Logout
           </Button>
         ) : (
-          <Link
-            component={NavLink}
-            to="/login"
-            color="inherit"
-            underline="hover"
-            activeStyle={activeLinkStyle}
-          >
+          <NavLink to="/login" color="inherit">
             Login
-          </Link>
+          </NavLink>
         )}
       </Box>
     </Container>

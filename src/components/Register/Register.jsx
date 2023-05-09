@@ -11,19 +11,12 @@ const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const error = useSelector(state => state.auth.error);
 
   useEffect(() => {
     if (user) {
       navigate('/contacts');
     }
   }, [user, navigate]);
-
-  useEffect(() => {
-    if (error) {
-      alert(error);
-    }
-  }, [error]);
 
   const handleSubmit = e => {
     e.preventDefault();
