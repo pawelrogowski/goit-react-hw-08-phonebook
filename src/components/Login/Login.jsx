@@ -1,15 +1,20 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { loginUser } from 'redux/features/auth/authSlice';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    dispatch(loginUser({ email, password }));
+    const action = await dispatch(loginUser({ email, password }));
+    if (loginUser.fulfilled.match(action)) {
+      navigate('/contacts');
+    }
   };
 
   return (

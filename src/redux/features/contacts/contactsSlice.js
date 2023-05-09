@@ -6,15 +6,8 @@ export const fetchContacts = createAsyncThunk('contacts/fetchContacts', async ()
   return response.data;
 });
 
-export const addContact = createAsyncThunk('contacts/addContact', async (contact, { getState }) => {
+export const addContact = createAsyncThunk('contacts/addContact', async contact => {
   try {
-    const state = getState();
-    const existingContact = state.contacts.contacts.find(c => c.number === contact.number);
-    if (existingContact) {
-      alert(`Contact with phone number ${contact.number} already exists`);
-      return;
-    }
-
     const response = await axiosInstance.post('/contacts', {
       name: contact.name,
       number: contact.number,
@@ -59,6 +52,9 @@ const contactsSlice = createSlice({
     setSearchTerm: (state, action) => {
       state.searchTerm = action.payload;
     },
+    clearContacts: state => {
+      state.contacts = [];
+    },
   },
 
   extraReducers: builder => {
@@ -90,7 +86,7 @@ const contactsSlice = createSlice({
         }
       })
       .addCase(deleteContact.fulfilled, (state, action) => {
-        state.contacts = state.contacts.filter(contact => contact._id !== action.payload);
+        state.contacts = state.contacts.filter(contact => contact.id !== action.payload);
         alert('200: The contact was successfully deleted.');
       })
       .addCase(deleteContact.rejected, (state, action) => {
@@ -123,6 +119,6 @@ const contactsSlice = createSlice({
   },
 });
 
-export const { setSearchTerm } = contactsSlice.actions;
+export const { setSearchTerm, clearContacts } = contactsSlice.actions;
 
 export default contactsSlice.reducer;
