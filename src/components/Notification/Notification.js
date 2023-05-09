@@ -14,7 +14,7 @@ const Notification = () => {
 
   return (
     <Snackbar
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       open={open}
       onClose={handleClose}
       message={message}

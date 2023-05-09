@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import ContactListItem from '../ContactListItem/ContactListItem';
-import { List, Box, CircularProgress, Container } from '@mui/material';
+import { List, Box, CircularProgress, Container, Typography } from '@mui/material';
 
 function ContactList() {
   const contacts = useSelector(state => state.contacts.contacts);
@@ -20,9 +20,15 @@ function ContactList() {
           </Box>
         ) : (
           <List>
-            {filteredContacts.map(contact => (
-              <ContactListItem key={contact.id} contact={contact} />
-            ))}
+            {filteredContacts.length === 0 ? (
+              <Typography variant="body1" align="center">
+                No contacts found.
+              </Typography>
+            ) : (
+              filteredContacts.map(contact => (
+                <ContactListItem key={contact.id} contact={contact} />
+              ))
+            )}
           </List>
         )}
       </Box>

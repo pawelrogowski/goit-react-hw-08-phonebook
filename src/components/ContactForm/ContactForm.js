@@ -53,7 +53,7 @@ function ContactForm() {
             margin="normal"
           />
         </FormControl>
-        <Button variant="contained" color="primary" type="submit" sx={{ mt: 2 }}>
+        <Button variant="contained" color="primary" type="submit" sx={{ mt: 2 }} fullWidth>
           Add Contact
         </Button>
       </Box>
