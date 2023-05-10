@@ -12,16 +12,31 @@ const handleNotification = (thunkAPI, message) => {
 };
 
 export const addContact = createAsyncThunk('contacts/addContact', async (contact, thunkAPI) => {
-  try {
-    const response = await axiosInstance.post('/contacts', {
-      name: contact.name,
-      number: contact.number,
-    });
-    handleNotification(thunkAPI, 'The contact was successfully created.');
-    return response.data;
-  } catch (error) {
-    handleNotification(thunkAPI, 'Error creating contact.');
-    return thunkAPI.rejectWithValue(error.response.data.message);
+  const state = thunkAPI.getState();
+  const { contacts } = state.contacts;
+
+  const existingContact = contacts.find(
+    existingContact => existingContact.number === contact.number
+  );
+
+  if (existingContact) {
+    handleNotification(
+      thunkAPI,
+      `The number already exists in the contacts for ${existingContact.name}.`
+    );
+    return thunkAPI.rejectWithValue('Number already exists in the contacts.');
+  } else {
+    try {
+      const response = await axiosInstance.post('/contacts', {
+        name: contact.name,
+        number: contact.number,
+      });
+      handleNotification(thunkAPI, 'The contact was successfully created.');
+      return response.data;
+    } catch (error) {
+      handleNotification(thunkAPI, 'Error creating contact.');
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
   }
 });
 
