@@ -57,13 +57,32 @@ export const deleteContact = createAsyncThunk(
 export const updateContact = createAsyncThunk(
   'contacts/updateContact',
   async ({ contactId, contactData }, thunkAPI) => {
-    try {
-      const response = await axiosInstance.patch(`/contacts/${contactId}`, contactData);
-      handleNotification(thunkAPI, 'The contact was successfully updated.');
-      return { contactId, contactData: response.data };
-    } catch (error) {
-      handleNotification(thunkAPI, 'Error updating contact.');
-      return thunkAPI.rejectWithValue(error.response.data.message);
+    // Get the current state of the contacts
+    const state = thunkAPI.getState();
+    const { contacts } = state.contacts;
+
+    // Find the existing contact with the same number, if any, and exclude the current contact being updated
+    const existingContact = contacts.find(
+      existingContact =>
+        existingContact.number === contactData.number && existingContact._id !== contactId
+    );
+
+    if (existingContact) {
+      // If the number exists, display a notification with the existing contact's name and reject the action
+      handleNotification(
+        thunkAPI,
+        `The number already exists in the contacts for ${existingContact.name}.`
+      );
+      return thunkAPI.rejectWithValue('Number already exists in the contacts.');
+    } else {
+      try {
+        const response = await axiosInstance.patch(`/contacts/${contactId}`, contactData);
+        handleNotification(thunkAPI, 'The contact was successfully updated.');
+        return { contactId, contactData: response.data };
+      } catch (error) {
+        handleNotification(thunkAPI, 'Error updating contact.');
+        return thunkAPI.rejectWithValue(error.response.data.message);
+      }
     }
   }
 );
