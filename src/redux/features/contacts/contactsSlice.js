@@ -64,7 +64,7 @@ export const updateContact = createAsyncThunk(
     // Find the existing contact with the same number, if any, and exclude the current contact being updated
     const existingContact = contacts.find(
       existingContact =>
-        existingContact.number === contactData.number && existingContact._id !== contactId
+        existingContact.number === contactData.number && existingContact.id !== contactId
     );
 
     if (existingContact) {
@@ -127,7 +127,7 @@ const contactsSlice = createSlice({
       })
       .addCase(updateContact.fulfilled, (state, action) => {
         const indexToUpdate = state.contacts.findIndex(
-          contact => contact._id === action.payload.contactId
+          contact => contact.id === action.payload.contactId
         );
         if (indexToUpdate >= 0) {
           state.contacts[indexToUpdate] = action.payload.contactData;
