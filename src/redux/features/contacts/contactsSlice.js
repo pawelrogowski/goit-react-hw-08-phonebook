@@ -107,11 +107,16 @@ const contactsSlice = createSlice({
 
   extraReducers: builder => {
     builder
+      .addCase(fetchContacts.pending, state => {
+        state.status = 'loading';
+      })
       .addCase(fetchContacts.fulfilled, (state, action) => {
         state.contacts = action.payload;
+        state.status = 'succeeded';
       })
       .addCase(fetchContacts.rejected, (state, action) => {
         state.error = action.payload;
+        state.status = 'failed';
       })
       .addCase(addContact.fulfilled, (state, action) => {
         state.contacts.push(action.payload);

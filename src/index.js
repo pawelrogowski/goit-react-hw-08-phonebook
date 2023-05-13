@@ -7,10 +7,11 @@ import store from 'redux/store';
 import { BrowserRouter } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+const baseRoute = '/goit-react-hw-08-phonebook';
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
+      <BrowserRouter basename={baseRoute}>
         <App></App>
       </BrowserRouter>
     </Provider>
