@@ -15,7 +15,7 @@ function Auth() {
 
   return (
     <Routes>
-      <Route path="/goit-react-hw-08-phonebook/" element={<Navigate to="/contacts" />} />
+      <Route path="/" element={<Navigate to="/contacts" />} />
       <Route
         path="/contacts"
         element={
