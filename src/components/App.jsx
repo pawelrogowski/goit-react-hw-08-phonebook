@@ -1,10 +1,13 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useEffect } from 'react';
 import { Route, Routes, Navigate, Outlet } from 'react-router-dom';
 import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
 import Header from './Header/Header';
 import Notification from './Notification/Notification';
 import Auth from './Auth/Auth';
 import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
+import eventEmitter from 'eventEmiter';
+import { useDispatch } from 'react-redux';
+import { logoutUser } from 'redux/features/auth/authSlice';
 
 const Register = lazy(() => import('./Register/Register'));
 
@@ -25,6 +28,20 @@ const darkTheme = createTheme({
 });
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const onLogout = () => {
+      dispatch(logoutUser());
+    };
+
+    eventEmitter.on('logout', onLogout);
+
+    return () => {
+      eventEmitter.off('logout', onLogout);
+    };
+  }, [dispatch]);
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
