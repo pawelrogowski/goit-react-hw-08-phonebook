@@ -57,11 +57,11 @@ function ContactListItem({ contact }) {
     <>
       <Collapse in={isExpanded}>
         <ListItem>
+          <IconButton edge="start" color="info" onClick={handleEdit}>
+            <EditIcon />
+          </IconButton>
           <ListItemText primary={contact.name} secondary={contact.number} />
           <ListItemSecondaryAction>
-            <IconButton edge="end" color="info" onClick={handleEdit}>
-              <EditIcon />
-            </IconButton>
             <IconButton edge="end" color="error" onClick={handleDelete}>
               <DeleteIcon />
             </IconButton>
