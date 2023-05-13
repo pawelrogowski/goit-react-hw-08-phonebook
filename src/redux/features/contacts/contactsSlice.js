@@ -57,18 +57,15 @@ export const deleteContact = createAsyncThunk(
 export const updateContact = createAsyncThunk(
   'contacts/updateContact',
   async ({ contactId, contactData }, thunkAPI) => {
-    // Get the current state of the contacts
     const state = thunkAPI.getState();
     const { contacts } = state.contacts;
 
-    // Find the existing contact with the same number, if any, and exclude the current contact being updated
     const existingContact = contacts.find(
       existingContact =>
         existingContact.number === contactData.number && existingContact.id !== contactId
     );
 
     if (existingContact) {
-      // If the number exists, display a notification with the existing contact's name and reject the action
       handleNotification(
         thunkAPI,
         `The number already exists in the contacts for ${existingContact.name}.`

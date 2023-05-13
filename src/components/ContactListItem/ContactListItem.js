@@ -2,13 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { deleteContact, updateContact, fetchContacts } from 'redux/features/contacts/contactsSlice';
-import {
-  ListItem,
-  ListItemText,
-  IconButton,
-  ListItemSecondaryAction,
-  Collapse,
-} from '@mui/material';
+import { ListItem, ListItemText, Button, ListItemSecondaryAction, Collapse } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import EditContactDialog from '../EditContactDialog/EditContactDialog';
@@ -57,14 +51,33 @@ function ContactListItem({ contact }) {
     <>
       <Collapse in={isExpanded}>
         <ListItem>
-          <IconButton edge="start" color="info" onClick={handleEdit}>
-            <EditIcon />
-          </IconButton>
           <ListItemText primary={contact.name} secondary={contact.number} />
           <ListItemSecondaryAction>
-            <IconButton edge="end" color="error" onClick={handleDelete}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleEdit}
+              sx={{
+                minWidth: 48,
+                minHeight: 48,
+                mr: 1,
+                borderRadius: 1,
+              }}
+            >
+              <EditIcon />
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleDelete}
+              sx={{
+                minWidth: 48,
+                minHeight: 48,
+                borderRadius: 1,
+              }}
+            >
               <DeleteIcon />
-            </IconButton>
+            </Button>
           </ListItemSecondaryAction>
         </ListItem>
       </Collapse>
