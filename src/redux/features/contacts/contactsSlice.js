@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axiosInstance from '../../api';
+import axiosInstance from '../../../services/api';
 import { showNotification } from '../notification/notificationSlice';
 
 export const fetchContacts = createAsyncThunk('contacts/fetchContacts', async () => {

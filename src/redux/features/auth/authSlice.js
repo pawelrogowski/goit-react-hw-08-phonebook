@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { showNotification } from '../notification/notificationSlice';
-import axiosInstance from '../../api';
+import axiosInstance from '../../../services/api';
 
 const handleAuthLocalStorage = (token, user) => {
   if (token && user) {
